@@ -42,6 +42,8 @@ public class DefectRaising
 			// to next required method which accepts generated session ID
 			// without parsing json response and extracting session ID
 			
+			//Need to use filter(SessionFilterVeriableName) before given()
+			
 			.when().log().all().post("rest/auth/1/session")
 			
 			.then().log().all().extract().response().asString();
