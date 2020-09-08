@@ -5,6 +5,8 @@ import Utilities.Utilities;
 
 import static io.restassured.RestAssured.*;
 
+import java.io.File;
+
 import org.testng.annotations.Test;
 
 import io.restassured.RestAssured;
@@ -53,13 +55,15 @@ public class DefectRaising
 			//SessionID = Utilities.SessionID(SessionIDPOST,sessionIDPath);
 			
 			//System.out.println(SessionID);
+			
+			/*Adding comment to existing jira*/
 			 
 					given()
 			.pathParam("ID", "10202")
 			.header("Content-type","application/json")
 			//.header("Cookie",SessionID)
 			.body("{\n" + 
-					"    \"body\": \"Adding comment to the issue\",\n" + 
+					"    \"body\": \"Adding new comment to the issue\",\n" + 
 					"    \"visibility\": {\n" + 
 					"        \"type\": \"role\",\n" + 
 					"        \"value\": \"Administrators\"\n" + 
@@ -70,34 +74,20 @@ public class DefectRaising
 			.post("rest/api/2/issue/{ID}/comment")
 			.then().log().all().assertThat().statusCode(201);
 			
-			// Creating issue from generated session ID
 			
-			/*String CreattIssuePost = given().log().all().
+			// Adding attachment using "multiPart" restAssured method
 					
-					header("Content-type","application/json")
+			// We are using post method to add attachment without any json body using curl statement for attachment
+			// So while sending header we need to give header as ("Content-Type","multipart/form-data")
 					
-					.header("Cookie",SessionID)
-					
-					.body(Utilities.createIssue())
-					
-					.when().post("rest/api/2/issue")
-					
-					.then().log().all().extract().response().asString();
+			given()
+			.pathParam("ID", "10202")
+			.header("X-Atlassian-Token","no-check")
+			.header("Content-Type","multipart/form-data")
+			.filter(session).multiPart("file", new File(System.getProperty("user.dir")+"\\src\\test\\resources\\JIRAAttachments\\attachment.txt"))
+			.when().post("rest/api/2/issue/{ID}/attachments")
+			.then().log().all().assertThat().statusCode(200);
 			
-			String IssueID = Utilities.SessionID(CreattIssuePost, "id");
-			
-			System.out.println(IssueID);*/
-			
-			
-			
-		
-		
-		/*given().log().all().pathParam("issueId", "12345")
-		
-		.header("Content-Type", "application/json")
-		
-		.body(Utilities.addCommentJiraBoday("adding a comment"))
-		
-		.when().post("rest/api/2/issue/{issueId}/comment");*/
+			// Get isssue details
 	}
 }
