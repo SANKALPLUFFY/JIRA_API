@@ -54,6 +54,29 @@ public class Utilities
 		
 		return sessinID;
 	}
+	
+	public static String arraySize(String json, String path, String recentID)
+	{
+		JsonPath js1 = new JsonPath(json);
+		
+		String recentComment = null;
+		
+		int sessinIDSize = js1.getInt(path+".size()");
+		
+		for(int i=0;i<sessinIDSize;i++)
+		{
+			String ID = js1.get(path+"["+i+"].id").toString();
+			
+			System.out.println(ID);
+			
+			if(ID.contentEquals(recentID))
+			{
+				recentComment = js1.get(path+"["+i+"].body").toString();
+			}
+		}
+		
+		return recentComment;
+	}
 
 }
 

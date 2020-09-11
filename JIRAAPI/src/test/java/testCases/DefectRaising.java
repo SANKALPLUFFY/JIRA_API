@@ -4,9 +4,11 @@ package testCases;
 import Utilities.Utilities;
 
 import static io.restassured.RestAssured.*;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.restassured.RestAssured;
@@ -57,13 +59,16 @@ public class DefectRaising
 			//System.out.println(SessionID);
 			
 			/*Adding comment to existing jira*/
+			
+			String comment = "Update six";
 			 
-					given()
+				String CommentID=	
+						given()
 			.pathParam("ID", "10202")
 			.header("Content-type","application/json")
 			//.header("Cookie",SessionID)
 			.body("{\n" + 
-					"    \"body\": \"Adding new comment to the issue\",\n" + 
+					"    \"body\": \""+comment+"\",\n" + 
 					"    \"visibility\": {\n" + 
 					"        \"type\": \"role\",\n" + 
 					"        \"value\": \"Administrators\"\n" + 
@@ -72,7 +77,9 @@ public class DefectRaising
 			.filter(session)
 			.when().log().all()
 			.post("rest/api/2/issue/{ID}/comment")
-			.then().log().all().assertThat().statusCode(201);
+			.then().log().all().extract().asString();
+				
+				String commentID = Utilities.SessionID(CommentID, "id");
 			
 			
 			// Adding attachment using "multiPart" restAssured method
@@ -89,5 +96,29 @@ public class DefectRaising
 			.then().log().all().assertThat().statusCode(200);
 			
 			// Get isssue details
+			
+			String issueDetails = 
+					given()
+			.pathParam("ID","10202")
+			.queryParam("fields", "comment")
+			.filter(session)
+			.when().get("rest/api/2/issue/{ID}")
+			.then().log().all().extract().response().asString();
+			
+			
+			String fetchedRecentComment = Utilities.arraySize(issueDetails, "fields.comment.comments", commentID);
+			
+			if(fetchedRecentComment.equalsIgnoreCase(comment))
+			{
+				System.out.println("Pass");
+				
+				System.out.println("RecentComment is:"+" "+comment +" , "+"and fetched comment is:"+" "+fetchedRecentComment);
+			}
+			else
+			{
+				Assert.assertTrue(false, "Wrong comment");
+			}
+			
+			
 	}
 }
