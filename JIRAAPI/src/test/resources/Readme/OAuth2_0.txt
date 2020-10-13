@@ -1,0 +1,43 @@
+	  /* Flow
+	   * 
+	   * 1. Get access code from provider authorization server - Developer shall provide URI from which we need to fetch code
+	   * 2. Use the access code fetched earlier and hit resource server of provider to get resource & access token - Developer shall
+	   * provide the URI 
+	   * 3. Use the access token and hit the resource server to perform any operations on client and share the result 
+	   * using same access token to user with the help of details provided by provider
+	   *
+	   */
+	  
+	  /*
+	   * Access code is part of the URI which we get after going to client end, then selecting provider and logging with 
+	   * provider's access details ( username & password )
+	   * 
+	   * Request URL for access code consists following points
+	   *  
+	   *  1. Scope :-        Fields from resource servers ( Ex. Name, E mail, Phone No, etc) & for different resource type 
+	   *                     there is separate end point i.e if client need Name & email, we will have to provide two different scope
+	   *                     parameters in URL
+	   *  2. Auth_URl:-      Which authorization server we are authorizing to provided by service provider , like Google
+	   *  3. Client_ID:-     When client registers with service provider ( Google / Facebook / etc ) client ID & client secret ID
+	   *   				     gets generated
+	   *  4. Response_type:- What type of response to get from provider, in this case OPT / access code
+	   *  5. Redirect_uri:-  After login & access token generation where provider shall redirect user to (to client page)
+	   *
+	   * If developer does not provide complete authorization code url then we can use above mentioned fields as query parameters(?)
+	   * starting with Auth_url. 
+	   * Then copy this entire URL and use it in browser which then will ask user to login with provider type from client and then
+	   * it will redirect user to mentioned url which also contains the needed code
+	   * After that we can use this generated authorization code to fetch access token.
+	   */
+	   
+	  
+	   
+	   /*
+	    * For getting access token & resources need to call the resource server end point with following parameters
+	    *
+	    * 1. Code:-          Fetched from URL after logging to provider from client end
+	    * 2. Client_id: -    Generated at time of registration of client with provider
+	    * 3. Client_secret:- Generated at time of registration of client with provider
+	    * 4. Redirect_uri:-  Redirection after logging and getting details from provider
+	    * 5. Grant_type:-    Type of resource access granted by provider ( authorization_code ) 
+	    */
