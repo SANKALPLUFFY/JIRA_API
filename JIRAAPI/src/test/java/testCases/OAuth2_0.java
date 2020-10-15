@@ -11,6 +11,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 
+import Pojo.getCourses;
+import io.restassured.parsing.Parser;
 import io.restassured.path.json.JsonPath;
 
 import static io.restassured.RestAssured.*;
@@ -126,10 +128,24 @@ public class OAuth2_0
   @Test(dependsOnMethods= {"accessToken","authorizatinCode"})
   public void apiCall()
   {
-	  String response = given().queryParam("access_token", ParsedaccessToken)
-	  .when().log().all().get("https://rahulshettyacademy.com/getCourse.php").asString();
+	  getCourses response = given().queryParam("access_token", ParsedaccessToken).expect().defaultParser(Parser.JSON)
+	  .when().get("https://rahulshettyacademy.com/getCourse.php").as(getCourses.class);
 	  
-	  System.out.println(response);
+	  System.out.println(response.getServices());
+	  
+	  int api_Size = response.getCourses().getApi().size();
+	  
+	  for(int i=0;i<api_Size;i++)
+	  {
+		  String courseTitle = response.getCourses().getApi().get(i).getCourseTitle();
+		  
+		  if(courseTitle.contentEquals("SoapUI Webservices testing"))
+		  {
+			  String coursePrice = response.getCourses().getApi().get(i).getPrice();
+			  
+			  System.out.println("Price of SoapUI Webservices testing course is"+" "+coursePrice);
+		  }
+	  }
 	
   }
 }
