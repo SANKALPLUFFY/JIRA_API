@@ -7,19 +7,14 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.Test;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
 import Pojo.getCourses;
 import io.restassured.parsing.Parser;
 import io.restassured.path.json.JsonPath;
-
 import static io.restassured.RestAssured.*;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class OAuth2_0 
 {
@@ -146,6 +141,54 @@ public class OAuth2_0
 			  System.out.println("Price of SoapUI Webservices testing course is"+" "+coursePrice);
 		  }
 	  }
+	  
+	  ArrayList<String> expectedList = new ArrayList<String>();
+	  
+	  expectedList.add("Selenium Webdriver Java");
+	  
+	  expectedList.add("Cypress");
+	  
+	  expectedList.add("Protractor");
+	  
+	  ArrayList<String> actualList = new ArrayList<String>();
+	  
+	  for(int i=0;i<response.getCourses().getWebAutomation().size();i++)
+	  {
+		  String webCourse = response.getCourses().getWebAutomation().get(i).getCourseTitle();
+		  
+		  //System.out.println(webCourse);
+		  
+		  String webCoursePrice = response.getCourses().getWebAutomation().get(i).getPrice();
+		  
+		 // System.out.println("Web automation course is"+" "+webCourse+" "+"&"+" "+"its price is"+" "+webCoursePrice);
+		  
+		  actualList.add(webCourse);
+	  }
+	  
+	  if(expectedList.size()==actualList.size())
+	  {
+		  for(int i=0;i<actualList.size();i++)
+		  {
+			  try {
+				if(expectedList.get(i).contentEquals(actualList.get(i)))
+				  {
+					  System.out.println("Courses matches");
+				  }
+				  else
+				  {
+					  Assert.assertTrue(false, "Course mismatch");
+				  }
+			} 
+			  catch (Exception e) 
+			  {
+				i++;
+			}
+		  }
+	  }
 	
   }
 }
+
+/*
+ * 
+ */
